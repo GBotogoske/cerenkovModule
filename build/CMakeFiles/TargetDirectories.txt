@@ -1,8 +1,0 @@
-/home/gabriel/Documents/cherenkov-module/build/CMakeFiles/run.dir
-/home/gabriel/Documents/cherenkov-module/build/CMakeFiles/Project.dir
-/home/gabriel/Documents/cherenkov-module/build/CMakeFiles/edit_cache.dir
-/home/gabriel/Documents/cherenkov-module/build/CMakeFiles/rebuild_cache.dir
-/home/gabriel/Documents/cherenkov-module/build/CMakeFiles/list_install_components.dir
-/home/gabriel/Documents/cherenkov-module/build/CMakeFiles/install.dir
-/home/gabriel/Documents/cherenkov-module/build/CMakeFiles/install/local.dir
-/home/gabriel/Documents/cherenkov-module/build/CMakeFiles/install/strip.dir
