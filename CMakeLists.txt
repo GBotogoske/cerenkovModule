@@ -59,6 +59,18 @@ target_link_libraries(run ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} nlohmann_json::n
 
 #----------------------------------------------------------------------------
 
+set(EXAMPLEB1_SCRIPTS
+  macro/init_vis.mac
+  )
+foreach(_script ${EXAMPLEB1_SCRIPTS})
+  configure_file(
+    ${PROJECT_SOURCE_DIR}/${_script}
+    ${PROJECT_BINARY_DIR}/${_script}
+    COPYONLY
+    )
+endforeach()
+
+
 #----------------------------------------------------------------------------
 # For internal Geant4 use - but has no effect if you build this
 # example standalone

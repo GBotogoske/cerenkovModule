@@ -1,6 +1,5 @@
-//#include "DetectorConstruction.hh"
+#include "DetectorConstruction.hh"
 #include "ActionInitialization.hh"
-//#include "PhysicsList.hh"
 
 #include "FTFP_BERT.hh"
 #include "G4EmStandardPhysics_option4.hh"
@@ -13,6 +12,7 @@
 #include "G4UIExecutive.hh"
 
 #include "Randomize.hh"
+
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -39,7 +39,7 @@ int main(int argc,char** argv)
     // Set mandatory initialization classes
     //
     // Detector construction
-    //runManager->SetUserInitialization(new DetectorConstruction());
+    runManager->SetUserInitialization(new DetectorConstruction());
 
     // Physics list
 
@@ -71,7 +71,7 @@ int main(int argc,char** argv)
     else 
     { 
         // interactive mode
-        UImanager->ApplyCommand("/control/execute init_vis.mac");
+        UImanager->ApplyCommand("/control/execute macro/init_vis.mac");
         //UImanager->ApplyCommand("/control/execute gui.mac");
         //UImanager->ApplyCommand("/vis/open OGL 600x600-0+0");
         ui->SessionStart();
