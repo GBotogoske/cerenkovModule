@@ -54,29 +54,10 @@ file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh)
 #----------------------------------------------------------------------------
 # Add the executable, and link it to the Geant4 libraries
 #
-add_executable(run project.cc ${sources} ${headers})
+add_executable(run main.cc ${sources} ${headers})
 target_link_libraries(run ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} nlohmann_json::nlohmann_json)
 
 #----------------------------------------------------------------------------
-# Copy all scripts to the build directory, i.e. the directory in which we
-# build B1. This is so that we can run the executable directly because it
-# relies on these scripts being in the current working directory.
-#
-set(EXAMPLEB1_SCRIPTS
-  init_vis.mac
-  gui.mac
-  MacroTest.mac
-  )
-
-file(COPY "OptData" DESTINATION ${PROJECT_BINARY_DIR})
-
-foreach(_script ${EXAMPLEB1_SCRIPTS})
-  configure_file(
-    ${PROJECT_SOURCE_DIR}/${_script}
-    ${PROJECT_BINARY_DIR}/${_script}
-    COPYONLY
-    )
-endforeach()
 
 #----------------------------------------------------------------------------
 # For internal Geant4 use - but has no effect if you build this
@@ -85,6 +66,6 @@ endforeach()
 add_custom_target(Project DEPENDS run)
 
 #----------------------------------------------------------------------------
-# Install the executable to 'bin' directory under CMAKE_INSTALL_PREFIX
+# Install the executabl/home/gabriel/Documents/geant4_class/project/CMakeLists.txte to 'bin' directory under CMAKE_INSTALL_PREFIX
 #
 install(TARGETS run DESTINATION bin)
