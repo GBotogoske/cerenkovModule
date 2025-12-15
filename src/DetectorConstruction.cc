@@ -25,6 +25,8 @@
 #include "G4NistManager.hh"
 #include <math.h>
 
+#include "SensitiveDetector.hh"
+
 #include "utils.hh"
 
 
@@ -130,14 +132,14 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     G4Material* Si_mat = fNistManager->FindOrBuildMaterial("G4_Si");
     G4MaterialPropertiesTable* mpt_Si = new G4MaterialPropertiesTable();
     mpt_Si->AddProperty("RINDEX",{1*eV,10*eV},{1.5,1.5},2);
-    mpt_Si->AddProperty("ABSLENGTH",{1*eV,10*eV},{000000001,000000001},2);
+    mpt_Si->AddProperty("ABSLENGTH",{1*eV,10*eV},{0.0001*mm,0.0001*mm},2);
     Si_mat->SetMaterialPropertiesTable(mpt_Si);
 
     double sensor_thick = 0.8*mm;
-    double sensor_side = 0.5*cm;
+    double sensor_side = 4*cm;
     double sensor_position = water_sizeY/2-sensor_thick/2;
     auto solidSensor = new G4Box("Sensor",0.5*sensor_thick, 0.5*sensor_side, 0.5*sensor_side);
-    G4LogicalVolume* logicSensor = new G4LogicalVolume(solidSensor,H20_mat,"Sensor");
+    G4LogicalVolume* logicSensor = new G4LogicalVolume(solidSensor,Si_mat,"Sensor");
     G4VPhysicalVolume* physicalSensor = new G4PVPlacement(0,G4ThreeVector(sensor_position,0,0),logicSensor,"Sensor",logicWater,false,0,checkOverlaps); 
 
     G4VisAttributes* visSi = new G4VisAttributes(G4Colour(0.0, 0.8, 0.05)); 
@@ -146,6 +148,17 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
 
     //Escrever a logica do sensor
+    G4SDManager *SD_manager = G4SDManager::GetSDMpointer();
+    G4String SDModuleName = "/SensitiveDetector";
+    if(SD_manager->FindSensitiveDetector(SDModuleName,true))
+    {
+        delete(SD_manager->FindSensitiveDetector(SDModuleName,true));
+    }
+    SensitiveDetector *sensitiveModule = new SensitiveDetector(SDModuleName,"HitCollection");
+    SD_manager->AddNewDetector(sensitiveModule);
+    logicSensor->SetSensitiveDetector(sensitiveModule);
+   
+
 
 
     return physicalWorld;

@@ -4,6 +4,7 @@
 #include "G4UserEventAction.hh"
 #include "globals.hh"
 #include "G4ThreeVector.hh"
+#include "MyHit.hh"
 
 /// Event action class
 ///
@@ -20,6 +21,10 @@ class EventAction : public G4UserEventAction
     void SetMuonEntry(const G4ThreeVector& p, G4double energy); 
     bool MuonEntered() const { return fMuonEntered; }
     G4ThreeVector EntryPos() const { return fEntryPos; }
+
+    HitCollection *GetHitsCollection(G4int HCID,const G4Event* event) const;
+    G4int fHCID;
+
     void clearPhotons ()
     { 
         this->fNphotons=0; 
@@ -30,6 +35,16 @@ class EventAction : public G4UserEventAction
         this->fNphotons+=add; 
         return; 
     }
+     void clearPhotonsAbs ()
+    { 
+        this->fNphotonsAbsWater=0; 
+        return; 
+    } 
+    void addPhotonsAbs(G4int add)
+    {
+        this->fNphotonsAbsWater+=add; 
+        return; 
+    }
 
   private:
 
@@ -37,6 +52,7 @@ class EventAction : public G4UserEventAction
     G4ThreeVector fEntryPos;
     G4double fMuonEnergy;
     G4int fNphotons = 0;
+    G4int fNphotonsAbsWater = 0;
     
 };
 

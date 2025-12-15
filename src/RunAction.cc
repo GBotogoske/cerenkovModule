@@ -23,9 +23,8 @@ RunAction::RunAction(): G4UserRunAction(), fOutputFileName("/home/gabriel/Docume
     analysisManager->CreateNtupleDColumn(0,"Z");
     analysisManager->CreateNtupleDColumn(0,"KEnergy");
     analysisManager->CreateNtupleDColumn(0,"NPhotons");
-
-    /* analysisManager->CreateNtupleDColumn(0,"PhotonWaterAbsorved");
-    analysisManager->CreateNtupleDColumn(0,"PhotonDetected"); */
+    analysisManager->CreateNtupleDColumn(0,"NPhotonsWater");
+    analysisManager->CreateNtupleDColumn(0,"PhotonDetected");
     analysisManager->FinishNtuple(0);
 }
 

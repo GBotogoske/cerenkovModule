@@ -3,6 +3,7 @@
 #include "RunAction.hh"
 #include "EventAction.hh"
 #include "SteppingAction.hh"
+#include "TrackingAction.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -37,6 +38,9 @@ void ActionInitialization::Build() const
 
     SteppingAction* stepAction = new SteppingAction(eventAction);
     SetUserAction(stepAction);
+
+    TrackingAction* trackAction = new TrackingAction(eventAction);
+    SetUserAction(trackAction);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
