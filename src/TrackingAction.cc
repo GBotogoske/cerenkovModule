@@ -7,6 +7,21 @@
 #include "G4StepPoint.hh"
 #include "G4VPhysicalVolume.hh"
 
+
+void TrackingAction::PreUserTrackingAction(const G4Track* track)
+{
+    if (!fEventAction) return;
+
+    if (track->GetDefinition() != G4OpticalPhoton::Definition()) return;
+
+    auto* creator = track->GetCreatorProcess();
+    if (creator && creator->GetProcessName() == "OpWLS") 
+    {
+        fEventAction->addWLS(1);
+    }
+}
+
+
 void TrackingAction::PostUserTrackingAction(const G4Track* track)
 {
     if (!fEventAction) return;

@@ -79,5 +79,5 @@ void SensitiveDetector::CleanSDMemory()
 
 void SensitiveDetector::PrintSDMemoryStatus()
 {
-    G4cout << "Foram detectados: " << SensitiveDetector::GetCounterStatus() << std::endl;
+    //G4cout << "Foram detectados: " << SensitiveDetector::GetCounterStatus() << std::endl;
 }

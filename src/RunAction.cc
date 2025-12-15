@@ -16,6 +16,7 @@ RunAction::RunAction(): G4UserRunAction(), fOutputFileName("/home/gabriel/Docume
     G4RunManager::GetRunManager()->SetPrintProgress(1);
     G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
     G4cout << "Using " << analysisManager->GetType() << G4endl;
+    analysisManager->SetNtupleMerging(true);
     analysisManager->CreateNtuple("Primary_Muon", "Primary_Muon");
     analysisManager->CreateNtupleIColumn(0,"eventID");
     analysisManager->CreateNtupleDColumn(0,"X");
@@ -24,7 +25,8 @@ RunAction::RunAction(): G4UserRunAction(), fOutputFileName("/home/gabriel/Docume
     analysisManager->CreateNtupleDColumn(0,"KEnergy");
     analysisManager->CreateNtupleDColumn(0,"NPhotons");
     analysisManager->CreateNtupleDColumn(0,"NPhotonsWater");
-    analysisManager->CreateNtupleDColumn(0,"PhotonDetected");
+    analysisManager->CreateNtupleDColumn(0,"NPhotonsWLS");
+    analysisManager->CreateNtupleDColumn(0,"NPhotonsDetected");
     analysisManager->FinishNtuple(0);
 }
 

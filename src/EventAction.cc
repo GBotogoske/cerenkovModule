@@ -51,6 +51,8 @@ void EventAction::BeginOfEventAction(const G4Event* event)
 {
     clearPhotons();
     clearPhotonsAbs();
+    clearPhotonsWLS();
+    fMuonEntered = false;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -75,13 +77,15 @@ void EventAction::EndOfEventAction(const G4Event* event)
     am->FillNtupleDColumn(0,4, fMuonEnergy/CLHEP::MeV);
     am->FillNtupleDColumn(0,5, fNphotons);
     am->FillNtupleDColumn(0,6, fNphotonsAbsWater);
+    am->FillNtupleDColumn(0,7, fNphotonsWLS);
     int Pdetected = 0;
     if(HC->entries()>0)
     {
         Pdetected = (*HC)[0]->GetPhotonCounter();
     }
-    am->FillNtupleDColumn(0,7, Pdetected);
+    am->FillNtupleDColumn(0,8, Pdetected);
     am->AddNtupleRow();
+   
 
 }
 

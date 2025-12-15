@@ -45,6 +45,16 @@ class EventAction : public G4UserEventAction
         this->fNphotonsAbsWater+=add; 
         return; 
     }
+    void addWLS(G4int add)
+    {
+        this->fNphotonsWLS+=add; 
+        return; 
+    }
+    void clearPhotonsWLS ()
+    { 
+        this->fNphotonsWLS=0; 
+        return; 
+    } 
 
   private:
 
@@ -53,6 +63,7 @@ class EventAction : public G4UserEventAction
     G4double fMuonEnergy;
     G4int fNphotons = 0;
     G4int fNphotonsAbsWater = 0;
+    G4int fNphotonsWLS = 0;
     
 };
 

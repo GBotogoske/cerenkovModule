@@ -139,30 +139,25 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     double sensor_side = 4*cm;
     double sensor_position = water_sizeY/2-sensor_thick/2;
     auto solidSensor = new G4Box("Sensor",0.5*sensor_thick, 0.5*sensor_side, 0.5*sensor_side);
-    G4LogicalVolume* logicSensor = new G4LogicalVolume(solidSensor,Si_mat,"Sensor");
+    logicSensor = new G4LogicalVolume(solidSensor,Si_mat,"Sensor");
     G4VPhysicalVolume* physicalSensor = new G4PVPlacement(0,G4ThreeVector(sensor_position,0,0),logicSensor,"Sensor",logicWater,false,0,checkOverlaps); 
 
     G4VisAttributes* visSi = new G4VisAttributes(G4Colour(0.0, 0.8, 0.05)); 
     visSi->SetForceSolid(true); 
     logicSensor->SetVisAttributes(visSi);
-
-
-    //Escrever a logica do sensor
-    G4SDManager *SD_manager = G4SDManager::GetSDMpointer();
-    G4String SDModuleName = "/SensitiveDetector";
-    if(SD_manager->FindSensitiveDetector(SDModuleName,true))
-    {
-        delete(SD_manager->FindSensitiveDetector(SDModuleName,true));
-    }
-    SensitiveDetector *sensitiveModule = new SensitiveDetector(SDModuleName,"HitCollection");
-    SD_manager->AddNewDetector(sensitiveModule);
-    logicSensor->SetSensitiveDetector(sensitiveModule);
-   
-
-
-
     return physicalWorld;
 }
 
+void DetectorConstruction::ConstructSDandField()
+{
+    G4SDManager* SDman = G4SDManager::GetSDMpointer();
+
+    if (SDman->FindSensitiveDetector("SensitiveDetector", false) == nullptr) 
+    {
+        auto* sensitiveModule = new SensitiveDetector("SensitiveDetector", "HitCollection");
+        SDman->AddNewDetector(sensitiveModule);
+        logicSensor->SetSensitiveDetector(sensitiveModule);
+    }
+}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
