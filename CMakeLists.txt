@@ -61,6 +61,7 @@ target_link_libraries(run ${Geant4_LIBRARIES} ${ROOT_LIBRARIES} nlohmann_json::n
 
 set(EXAMPLEB1_SCRIPTS
   macro/init_vis.mac
+  macro/run.mac
   )
 foreach(_script ${EXAMPLEB1_SCRIPTS})
   configure_file(

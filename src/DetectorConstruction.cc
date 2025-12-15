@@ -127,7 +127,25 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     G4VPhysicalVolume* physicalWater = new G4PVPlacement(0,G4ThreeVector(),logicWater,"Water",logicPEN,false,0,checkOverlaps); 
 
     //Sensor Otico
+    G4Material* Si_mat = fNistManager->FindOrBuildMaterial("G4_Si");
+    G4MaterialPropertiesTable* mpt_Si = new G4MaterialPropertiesTable();
+    mpt_Si->AddProperty("RINDEX",{1*eV,10*eV},{1.5,1.5},2);
+    mpt_Si->AddProperty("ABSLENGTH",{1*eV,10*eV},{000000001,000000001},2);
+    Si_mat->SetMaterialPropertiesTable(mpt_Si);
 
+    double sensor_thick = 0.8*mm;
+    double sensor_side = 0.5*cm;
+    double sensor_position = water_sizeY/2-sensor_thick/2;
+    auto solidSensor = new G4Box("Sensor",0.5*sensor_thick, 0.5*sensor_side, 0.5*sensor_side);
+    G4LogicalVolume* logicSensor = new G4LogicalVolume(solidSensor,H20_mat,"Sensor");
+    G4VPhysicalVolume* physicalSensor = new G4PVPlacement(0,G4ThreeVector(sensor_position,0,0),logicSensor,"Sensor",logicWater,false,0,checkOverlaps); 
+
+    G4VisAttributes* visSi = new G4VisAttributes(G4Colour(0.0, 0.8, 0.05)); 
+    visSi->SetForceSolid(true); 
+    logicSensor->SetVisAttributes(visSi);
+
+
+    //Escrever a logica do sensor
 
 
     return physicalWorld;

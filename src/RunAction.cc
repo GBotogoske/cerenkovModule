@@ -2,7 +2,6 @@
 #include "PrimaryGeneratorAction.hh"
 #include "G4RunManager.hh"
 #include "G4Run.hh"
-#include "G4AccumulableManager.hh"
 #include "G4LogicalVolumeStore.hh"
 #include "G4LogicalVolume.hh"
 #include "G4UnitsTable.hh"
@@ -12,10 +11,22 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-RunAction::RunAction(): G4UserRunAction(), fOutputFileName("./Data") //, fPenCount(0)
+RunAction::RunAction(): G4UserRunAction(), fOutputFileName("/home/gabriel/Documents/cherenkov-module/data/Data") //, fPenCount(0)
 {
-
     G4RunManager::GetRunManager()->SetPrintProgress(1);
+    G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
+    G4cout << "Using " << analysisManager->GetType() << G4endl;
+    analysisManager->CreateNtuple("Primary_Muon", "Primary_Muon");
+    analysisManager->CreateNtupleIColumn(0,"eventID");
+    analysisManager->CreateNtupleDColumn(0,"X");
+    analysisManager->CreateNtupleDColumn(0,"Y");
+    analysisManager->CreateNtupleDColumn(0,"Z");
+    analysisManager->CreateNtupleDColumn(0,"KEnergy");
+    analysisManager->CreateNtupleDColumn(0,"NPhotons");
+
+    /* analysisManager->CreateNtupleDColumn(0,"PhotonWaterAbsorved");
+    analysisManager->CreateNtupleDColumn(0,"PhotonDetected"); */
+    analysisManager->FinishNtuple(0);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -29,15 +40,22 @@ RunAction::~RunAction()
 
 void RunAction::BeginOfRunAction(const G4Run*)
 {
-    
-
+    G4String fileName   = fOutputFileName;
+    G4String fileOutput = fileName;
+    fileOutput += ".root";
+    G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
+    analysisManager->OpenFile(fileOutput);    
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void RunAction::EndOfRunAction(const G4Run*)
 {
-    
+    auto analysisManager = G4AnalysisManager::Instance();
+    // save histograms & ntuple
+    G4cout<<"[INFO]: Write the output file "<<fOutputFileName<<".root"<<G4endl;
+    analysisManager->Write();
+    analysisManager->CloseFile();
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

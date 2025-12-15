@@ -2,8 +2,6 @@
 #define RunAction_h 1
 
 #include "G4UserRunAction.hh"
-#include "G4Accumulable.hh"
-#include "G4AccumulableManager.hh"
 #include "globals.hh"
 
 class G4Run;
