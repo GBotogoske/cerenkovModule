@@ -28,6 +28,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     
   protected:
     G4LogicalVolume* logicSensor;
+    json config;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

@@ -7,6 +7,9 @@
 #include "G4OpBoundaryProcess.hh"
 #include <vector>
 #include "MyHit.hh"
+#include "MySensorHit.hh"
+
+#include "SiPMSpectrum.hh"
 
 class G4Step;
 class G4HCofThisEvent;
@@ -15,7 +18,7 @@ class SensitiveDetector : public G4VSensitiveDetector
 {
     public:
     
-        SensitiveDetector(const G4String &SDname, const G4String &HitCollectionName);
+        SensitiveDetector(const G4String &SDname, const G4String &HitCollectionName, const G4String &SensorHitCollectionName);
 
         virtual ~SensitiveDetector();
 
@@ -35,6 +38,10 @@ class SensitiveDetector : public G4VSensitiveDetector
     private:
         HitCollection *fHitCollection;
         G4int   fP;
+
+        SensorHitCollection *fSensorHitCollection;
+
+        
 
 };
 

@@ -147,20 +147,17 @@ PrimaryGeneratorAction::~PrimaryGeneratorAction()
     delete fParticleGun;
 }
 
-
-
-
 void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
     //half_world
-    const G4double halfXW  = 0.5 * m/2;       // cobre seu detector
-    const G4double halfYW  = 0.5 * m/2;
-    const G4double halfZW   = 0.5 * m/2;       // acima do volume (ajuste)
+    const G4double halfXW  = 120 * cm/2;       // cobre seu detector
+    const G4double halfYW  = 120 * cm/2;
+    const G4double halfZW  = 120 * cm/2;       // acima do volume (ajuste)
 
     // volume do detector
-    const G4double halfX  = 0.2 * m/2;       // cobre seu detector
-    const G4double halfY  = 0.2 * m/2;
-    const G4double halfZ   = 0.2 * m/2;       // acima do volume (ajuste)
+    const G4double halfX  = 100 * cm/2;       // cobre seu detector
+    const G4double halfY  = 100 * cm/2;
+    const G4double halfZ  = 100 * cm/2;      // acima do volume (ajuste)
 
     // --------------------------------------------------------------------
 

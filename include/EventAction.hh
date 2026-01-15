@@ -5,6 +5,7 @@
 #include "globals.hh"
 #include "G4ThreeVector.hh"
 #include "MyHit.hh"
+#include "MySensorHit.hh"
 
 /// Event action class
 ///
@@ -23,7 +24,10 @@ class EventAction : public G4UserEventAction
     G4ThreeVector EntryPos() const { return fEntryPos; }
 
     HitCollection *GetHitsCollection(G4int HCID,const G4Event* event) const;
+    SensorHitCollection *GetSensorHitsCollection(G4int HCID,const G4Event* event) const;
     G4int fHCID;
+    G4int fHCID2;
+    int feventID;
 
     void clearPhotons ()
     { 
@@ -55,6 +59,8 @@ class EventAction : public G4UserEventAction
         this->fNphotonsWLS=0; 
         return; 
     } 
+
+    void insertPhoton(double typePhoton, double energy);
 
   private:
 

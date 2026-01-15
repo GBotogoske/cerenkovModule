@@ -35,6 +35,8 @@ G4bool checkOverlaps = true;
 
 DetectorConstruction::DetectorConstruction():G4VUserDetectorConstruction()
 {  
+    std::ifstream f("../configuration/config.json");
+    f >> this->config;
 }
 
 DetectorConstruction::~DetectorConstruction(){}
@@ -45,10 +47,11 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     G4NistManager *fNistManager = G4NistManager::Instance();
     fNistManager->SetVerbose(0);
 
+    auto config_world = config["world"];
     //MUNDO --> um bloco de ar 
-    G4double world_sizeX = 1*m;
-    G4double world_sizeY = 1*m;
-    G4double world_sizeZ = 1*m;
+    G4double world_sizeX = config_world["size"][0].get<double>()*cm;
+    G4double world_sizeY = config_world["size"][1].get<double>()*cm;
+    G4double world_sizeZ = config_world["size"][2].get<double>()*cm;
     G4Material* air_mat = fNistManager->FindOrBuildMaterial("G4_AIR");
     auto mpt_air = new G4MaterialPropertiesTable();
     mpt_air->AddProperty("RINDEX", {1*eV,10*eV}, {1.00,1.00}, 2);
@@ -59,10 +62,13 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     G4VPhysicalVolume* physicalWorld = new G4PVPlacement(0,G4ThreeVector(),logicWorld,"World",0,false,0,checkOverlaps);
 
     //caixa de plastico
-    G4double module_sizeX = 0.2*m;
-    G4double module_sizeY = 0.2*m;
-    G4double module_sizeZ = 0.2*m;
-    G4double module_thick = 0.1*mm;
+    auto config_box = config["box"];
+    //MUNDO --> um bloco de ar 
+    G4double module_sizeX = config_box["size"][0].get<double>()*cm;
+    G4double module_sizeY = config_box["size"][1].get<double>()*cm;
+    G4double module_sizeZ = config_box["size"][2].get<double>()*cm;
+    G4double module_thick = config_box["thick"].get<double>()*cm;
+
     G4Material* PVC_mat = fNistManager->FindOrBuildMaterial("G4_POLYVINYL_CHLORIDE");
     auto mpt_PVC = new G4MaterialPropertiesTable();
     mpt_PVC->AddProperty("RINDEX", {1*eV,10*eV}, {1.54,1.54}, 2);
@@ -96,7 +102,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     mpt_PEN->AddProperty("RINDEX",{0.1*eV,15*eV},{1.65,1.65} , 2);
     mpt_PEN->AddProperty("WLSABSLENGTH", PEN_E_abs, PEN_abs,PEN_E_abs.size());
     mpt_PEN->AddProperty("WLSCOMPONENT", PEN_E_WLS, PEN_WLS, PEN_E_WLS.size());
-    mpt_PEN->AddProperty("RAYLEIGH", {0.1*eV,15*eV} , {150*um, 150*um}, 2);
+    mpt_PEN->AddProperty("RAYLEIGH", {0.1*eV,15*eV} , {150*cm, 150*cm}, 2);
     mpt_PEN->AddConstProperty("WLSTIMECONSTANT",25.0*ns);
     mpt_PEN->AddConstProperty("WLSMEANNUMBERPHOTONS",0.4);
     PEN_mat->SetMaterialPropertiesTable(mpt_PEN);
@@ -112,13 +118,33 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     G4VPhysicalVolume* physicalPEN = new G4PVPlacement(0,G4ThreeVector(),logicPEN,"PEN",logicModule,false,0,checkOverlaps); 
 
     //DEPOIS DEFINIR AS OPTICAL SURFACE ENTRE PEN E TEFLON ( simular tyvek e vikuiti )
+    G4OpticalSurface* surface_vikuiti = new G4OpticalSurface("surface_vikuiti");
+    surface_vikuiti->SetModel(unified);
+    surface_vikuiti->SetType(dielectric_metal);
+    surface_vikuiti->SetFinish(polished);
+    G4MaterialPropertiesTable* mpt_Vikuiti = new G4MaterialPropertiesTable();
+    std::string file_VIK_REC="../configuration/vikuiti_reflectance.json";
+    std::vector<double> vik_E_rec, vik_rec;
+    getValues(&vik_E_rec,&vik_rec,file_VIK_REC,eV,1,"E","r");
+    mpt_Vikuiti->AddProperty("REFLECTIVITY",vik_E_rec,vik_rec,vik_E_rec.size());
+    surface_vikuiti->SetMaterialPropertiesTable(mpt_Vikuiti);
+
+    new G4LogicalBorderSurface("PEN-->VIKUITI", physicalPEN, physicalModule , surface_vikuiti );
 
     //VOLUME DE AGUA
-    
+    std::string file_H20_index="../configuration/water_index.json";
+    std::vector<double> H20_E_index, H20_index;
+    getValues(&H20_E_index,&H20_index,file_H20_index,eV,1,"E","r");
+
+    std::string file_H20_abs="../configuration/water_abs.json";
+    std::vector<double> H20_E_abs, H20_abs;
+    getValues(&H20_E_abs,&H20_abs,file_H20_abs,eV,m,"E","r");
+
+
     G4Material* H20_mat = fNistManager->FindOrBuildMaterial("G4_WATER");
     auto mpt_H20 = new G4MaterialPropertiesTable();
-    mpt_H20->AddProperty("RINDEX", {1*eV,10*eV}, {1.33,1.33}, 2);
-    mpt_H20->AddProperty("ABSLENGTH", {1*eV,10*eV}, {10*m, 10*m}, 2);
+    mpt_H20->AddProperty("RINDEX", H20_E_index, H20_index, H20_E_index.size());
+    mpt_H20->AddProperty("ABSLENGTH",H20_E_abs,H20_abs, H20_E_abs.size());
     H20_mat->SetMaterialPropertiesTable(mpt_H20);
 
     G4double water_sizeX = PEN_sizeX-2*PEN_thick;
@@ -128,16 +154,31 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     G4LogicalVolume* logicWater = new G4LogicalVolume(solidWater,H20_mat,"Water");
     G4VPhysicalVolume* physicalWater = new G4PVPlacement(0,G4ThreeVector(),logicWater,"Water",logicPEN,false,0,checkOverlaps); 
 
+
+    //Case sensor otico
+    double case_thick = 1*mm;
+    double sensor_thick = 0.8*mm;
+    double sensor_side = 4*cm;
+    double case_position = water_sizeX/2-(sensor_thick+case_thick)/2;
+    double sensor_position = water_sizeX/2-case_thick-sensor_thick/2;
+
+    std::cout << 1 << std::endl;
+    auto solidCase1 = new G4Box("SensorCaseBig",0.5*(sensor_thick+case_thick), 0.5*(sensor_side+2*case_thick), 0.5*(sensor_side+2*case_thick));
+    auto solidCase2 = new G4Box("SensorCaseSmall",0.5*sensor_thick, 0.5*sensor_side, 0.5*sensor_side);
+    auto solidCase = new G4SubtractionSolid("SensorCase",solidCase1,solidCase2,nullptr,G4ThreeVector(-(sensor_thick+case_thick)/2+sensor_thick/2,0,0));
+    auto logicCase = new G4LogicalVolume(solidCase,PVC_mat,"SensorCase");
+    G4VPhysicalVolume* physicalCase = new G4PVPlacement(0,G4ThreeVector(case_position,0,0),logicCase,"SensorCase",logicWater,false,0,checkOverlaps); 
+    G4VisAttributes* visCase = new G4VisAttributes(G4Colour(0.8, 0.1, 0.05)); 
+    visCase->SetForceSolid(true); 
+    logicCase->SetVisAttributes(visCase);
+
     //Sensor Otico
     G4Material* Si_mat = fNistManager->FindOrBuildMaterial("G4_Si");
     G4MaterialPropertiesTable* mpt_Si = new G4MaterialPropertiesTable();
     mpt_Si->AddProperty("RINDEX",{1*eV,10*eV},{1.5,1.5},2);
     mpt_Si->AddProperty("ABSLENGTH",{1*eV,10*eV},{0.0001*mm,0.0001*mm},2);
     Si_mat->SetMaterialPropertiesTable(mpt_Si);
-
-    double sensor_thick = 0.8*mm;
-    double sensor_side = 4*cm;
-    double sensor_position = water_sizeY/2-sensor_thick/2;
+   
     auto solidSensor = new G4Box("Sensor",0.5*sensor_thick, 0.5*sensor_side, 0.5*sensor_side);
     logicSensor = new G4LogicalVolume(solidSensor,Si_mat,"Sensor");
     G4VPhysicalVolume* physicalSensor = new G4PVPlacement(0,G4ThreeVector(sensor_position,0,0),logicSensor,"Sensor",logicWater,false,0,checkOverlaps); 
@@ -154,7 +195,7 @@ void DetectorConstruction::ConstructSDandField()
 
     if (SDman->FindSensitiveDetector("SensitiveDetector", false) == nullptr) 
     {
-        auto* sensitiveModule = new SensitiveDetector("SensitiveDetector", "HitCollection");
+        auto* sensitiveModule = new SensitiveDetector("SensitiveDetector", "HitCollection","SensorHitCollection");
         SDman->AddNewDetector(sensitiveModule);
         logicSensor->SetSensitiveDetector(sensitiveModule);
     }

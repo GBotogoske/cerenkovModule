@@ -23,11 +23,24 @@ RunAction::RunAction(): G4UserRunAction(), fOutputFileName("/home/gabriel/Docume
     analysisManager->CreateNtupleDColumn(0,"Y");
     analysisManager->CreateNtupleDColumn(0,"Z");
     analysisManager->CreateNtupleDColumn(0,"KEnergy");
-    analysisManager->CreateNtupleDColumn(0,"NPhotons");
-    analysisManager->CreateNtupleDColumn(0,"NPhotonsWater");
-    analysisManager->CreateNtupleDColumn(0,"NPhotonsWLS");
-    analysisManager->CreateNtupleDColumn(0,"NPhotonsDetected");
+    analysisManager->CreateNtupleIColumn(0,"NPhotons");
+    analysisManager->CreateNtupleIColumn(0,"NPhotonsWater");
+    analysisManager->CreateNtupleIColumn(0,"NPhotonsWLS");
+    analysisManager->CreateNtupleIColumn(0,"NPhotonsDetected");
     analysisManager->FinishNtuple(0);
+
+    analysisManager->CreateNtuple("Photon", "Photon");
+    analysisManager->CreateNtupleIColumn(1,"eventID");
+    analysisManager->CreateNtupleIColumn(1,"photonType"); // 0 -cherenkov, 1-wls
+    analysisManager->CreateNtupleDColumn(1,"energy");
+    analysisManager->FinishNtuple(1);
+
+    analysisManager->CreateNtuple("PhotonDetected", "PhotonDetected");
+    analysisManager->CreateNtupleIColumn(2,"eventID");
+    analysisManager->CreateNtupleIColumn(2,"photonType"); // 0 -cherenkov, 1-wls
+    analysisManager->CreateNtupleDColumn(2,"energy");
+    analysisManager->CreateNtupleIColumn(2,"detectorID");
+    analysisManager->FinishNtuple(2);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

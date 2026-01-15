@@ -18,6 +18,11 @@ void TrackingAction::PreUserTrackingAction(const G4Track* track)
     if (creator && creator->GetProcessName() == "OpWLS") 
     {
         fEventAction->addWLS(1);
+        fEventAction->insertPhoton(1,track->GetTotalEnergy());
+    }
+    if (creator && creator->GetProcessName() == "Cerenkov") 
+    {
+        fEventAction->insertPhoton(0,track->GetTotalEnergy());
     }
 }
 
@@ -29,7 +34,7 @@ void TrackingAction::PostUserTrackingAction(const G4Track* track)
     if (track->GetDefinition() != G4OpticalPhoton::Definition()) return;
 
     auto* creator = track->GetCreatorProcess();
-    if (!creator || creator->GetProcessName() != "Cerenkov") return;
+    if (!creator || (creator->GetProcessName() != "Cerenkov" && creator->GetProcessName() != "OpWLS")) return;
 
     const auto* step = track->GetStep();
     if (!step) return;

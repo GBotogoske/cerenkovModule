@@ -1,0 +1,17 @@
+{
+    "world": 
+    {
+        "size": [120, 120, 120] 
+    },
+    "box": 
+    {
+        "size": [100.0, 100.0, 100.0],
+        "thick":5
+    },
+    "SiPM":
+    { 
+        "efficiency_UV": "efficiency_UV.json",
+        "efficiency_VIS": "efficiency_VIS.json"
+    }
+
+}
